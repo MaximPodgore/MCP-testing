@@ -58,7 +58,7 @@ Conda environment for clean local dev environments
 
 
 ```
-conda create -n "agents_ucsd" python==3.10
+conda create -n "agents_ucsd" python==3.11
 conda activate agents_ucsd
 pip install -r requirements.txt
 python main.py
