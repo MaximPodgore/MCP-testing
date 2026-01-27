@@ -96,10 +96,8 @@ class SkillMiddleware(AgentMiddleware):
         # Extract user message and find relevant skills
         user_message = self._get_user_message(request)
         relevant_skills = self._find_relevant_skills(user_message)
-        
-        # Build the skills addendum
-        skills_addendum = f"\n\n## Available Skills\n\n{self.skills_prompt}"
-        
+
+        skills_addendum = ""
         # If relevant skills found, add their full content
         if relevant_skills:
             skills_addendum += "\n\n## Relevant Skill Details\n\n"
@@ -108,11 +106,7 @@ class SkillMiddleware(AgentMiddleware):
                     if skill['name'] == skill_name:
                         skills_addendum += f"### {skill_name}\n{skill['content']}\n\n"
                         break
-        else:
-            skills_addendum += (
-                "\n\nIf any of these skills are relevant to the request, "
-                "you can use the `load_skill` tool to get detailed instructions for that skill."
-            )
+
 
         # Append to system message content blocks
         new_content = list(request.system_message.content_blocks) + [
