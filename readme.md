@@ -1,29 +1,4 @@
 # UCSD Agent testing
-
-## Current Architecture
-
-Based on a langchain tutorial on how to add skills(+ skill middleware) to an agent. [Link](https://docs.langchain.com/oss/python/deepagents/middleware)
-
-Langchain agent with tools and skill middleware. The middleware looks at the request, identifies if any skills is relevant, and then loads the skill definition into context for the agent. Then the agent can call tools using the task and loaded skill definitions as context
-
-**Current tools:**
-- `curl`: As named
-- `load-skill`: As named, but isn't currently called because the middleware bypasses it.
-
-**Current skills:**
-- `get-weather`: a claude skill which I copied/downloaded
-
-## Setup
-Conda environment for clean local dev environments
-
-
-```
-conda create -n "agents_ucsd" python==3.10
-conda activate agents_ucsd
-pip install -r requirements.txt
-python main.py
-```
-
 ## Notes
 
 ### Langchain's Deep Agents vs our own Implementation
@@ -64,3 +39,28 @@ It seems like an agent can't add/initialize new MCP servers during runtime, as t
 - [Evaluator+optimizer](https://docs.langchain.com/oss/python/langgraph/workflows-agents#evaluator-optimizer) by using structured output + nodes
 
 [Useful docs on their multi-agent techniques](https://docs.langchain.com/oss/python/langchain/multi-agent#router-2)
+
+## Current Architecture
+
+Based on a langchain tutorial on how to add skills(+ skill middleware) to an agent. [Link](https://docs.langchain.com/oss/python/deepagents/middleware)
+
+Langchain agent with tools and skill middleware. The middleware looks at the request, identifies if any skills is relevant, and then loads the skill definition into context for the agent. Then the agent can call tools using the task and loaded skill definitions as context
+
+**Current tools:**
+- `curl`: As named
+- `load-skill`: As named, but isn't currently called because the middleware bypasses it.
+
+**Current skills:**
+- `get-weather`: a claude skill which I copied/downloaded
+
+## Setup
+Conda environment for clean local dev environments
+
+
+```
+conda create -n "agents_ucsd" python==3.10
+conda activate agents_ucsd
+pip install -r requirements.txt
+python main.py
+```
+
