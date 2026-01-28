@@ -8,14 +8,16 @@
 - planning/task-decomposition 
 - long-term memory
 - context management
-- sub-agent spawning
+- sub-agent spawning 
 - customizable backend (state/file-based)
 - human-in-the-loop support
 - [self-improving/modifying instructions/prompting](https://docs.langchain.com/oss/python/deepagents/long-term-memory#self-improving-instructions)
   
 **Deep Agent Architecure:**
 ![alt text](image.png)
-Todolist, Fileystem, and subagent are provided customizable middleware.[docs](https://docs.langchain.com/oss/python/deepagents/middleware)
+Todolist, Fileystem, and subagent are provided customizable middleware.[docs](https://docs.langchain.com/oss/python/deepagents/middleware)  
+
+They inject their default messages onto your system prompt, and you cannot change them (which is a giant pain)
 
 ### Tools vs Skills vs MCP server:
 
@@ -42,16 +44,15 @@ It seems like an agent can't add/initialize new MCP servers during runtime, as t
 
 ## Current Architecture
 
-Based on a langchain tutorial on how to add skills(+ skill middleware) to an agent. [Link](https://docs.langchain.com/oss/python/deepagents/middleware)
+Now it's just the default Deep Agent architecture + new tools + skills. 
 
-Langchain agent with tools and skill middleware. The middleware looks at the request, identifies if any skills is relevant, and then loads the skill definition into context for the agent. Then the agent can call tools using the task and loaded skill definitions as context
-
-**Current tools:**
+**Added tools:**
 - `curl`: As named
-- `load-skill`: As named, but isn't currently called because the middleware bypasses it.
 
-**Current skills:**
+
+**Manually added skills:**
 - `get-weather`: a claude skill which I copied/downloaded
+- `skill-creator`: as named, taken from [link](https://skillsmp.com/skills/langchain-ai-deepagents-libs-deepagents-cli-examples-skills-skill-creator-skill-md) (made by langchain)
 
 ## Setup
 Conda environment for clean local dev environments
@@ -61,6 +62,7 @@ Conda environment for clean local dev environments
 conda create -n "agents_ucsd" python==3.11
 conda activate agents_ucsd
 pip install -r requirements.txt
-python main.py
+# ask the agent to construct a skill from prompts/download_video_input.txt 
+python main.py  
 ```
 

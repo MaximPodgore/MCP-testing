@@ -21,6 +21,7 @@ agent = create_deep_agent(
     backend=backend,
     tools=[curl],
     skills=skills,
+    subagents=[], # turning subagents off so that it doesn't interfere with skill usageS
     interrupt_on={
         "write_file": True,  # Default: approve, edit, reject
         "read_file": False,  # No interrupts needed
@@ -28,12 +29,17 @@ agent = create_deep_agent(
     },
     checkpointer=checkpointer,
     system_prompt=(
-        "**CRITICAL INSTRUCTION:** When a user request matches an available skill, you MUST:\n"
-        "1. Use read_file to read the skill's SKILL.md file\n"
-        "2. Follow ALL instructions in the SKILL.md exactly as written\n"
-        "3. Complete every step outlined in the skill's Process section\n\n"
-        "Do NOT use tools directly if a skill exists for the task. Skills contain important "
-        "workflows and best practices that you must follow."
+        "**CRITICAL INSTRUCTION - SKILL USAGE PROTOCOL:**\n\n"
+        "BEFORE responding to ANY user request, you MUST:\n"
+        "1. Check the Available Skills list below\n"
+        "2. Compare the user's request against each skill's description and trigger phrases\n"
+        "3. If ANY skill even barely matches, you MUST READ that skill's SKILL.md and follow it\n"
+        "4. NEVER provide a direct answer if a matching skill exists\n\n"
+        "**Skill Matching Rules:**\n"
+        "- User says words from a skill description → USE that skill\n\n"
+        "Skills contain specialized workflows you MUST follow. Do NOT improvise "
+        "if a skill exists for the task. Read and execute the skill's instructions.\n\n"
+        "**WARNING: DO NOT USE THE TASK TOOL AND DO NOT USE SUBAGENTS.**\n\n"
     ),
 )
 
@@ -41,14 +47,17 @@ agent = create_deep_agent(
 thread_id = str(uuid.uuid4())
 config = {"configurable": {"thread_id": thread_id}}
 
+
+with open("prompts/download_video_input.txt", "r", encoding="utf-8") as f:
+    prompt = f.read()
+
+# Initial message
 result = agent.invoke(  
     {
         "messages": [
             {
                 "role": "user",
-                "content": (
-                    "What is the weather in La Jolla, CA this evening? "
-                ),
+                "content": prompt
             }
         ]
     },
@@ -61,3 +70,28 @@ for message in result["messages"]:
         message.pretty_print()
     else:
         print(f"{message.type}: {message.content}")
+
+# Continue conversation loop
+while True:
+    user_input = input("\nYour response (or 'exit' to quit): ")
+    if user_input.lower() == 'exit':
+        break
+    
+    result = agent.invoke(
+        {
+            "messages": [
+                {
+                    "role": "user",
+                    "content": user_input
+                }
+            ]
+        },
+        config  # Same config preserves conversation state
+    )
+    
+    # Print latest response
+    for message in result["messages"]:
+        if hasattr(message, 'pretty_print'):
+            message.pretty_print()
+        else:
+            print(f"{message.type}: {message.content}")
